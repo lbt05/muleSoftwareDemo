@@ -220,22 +220,28 @@ output application/json
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="fbdd44da-6c13-4d9f-b6b4-643f26599a71">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
+input payload application/json
 output application/json
+var objectFind = sizeOf(payload) > 0
 ---
+if (objectFind)
 {
-    data: {
-        id: payload[0].id,
+    data:  {
+        id: payload[0].id as String,
         firstName: payload[0].first_name,
         lastName: payload[0].last_name,
         address: payload[0].address
     },
     success: true,
     status: 200
-}]]></ee:set-payload>
+}
+else 
+{success: false,
+    status: 409 } ]]></ee:set-payload>
             </ee:message>
         </ee:transform>
 		<error-handler>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="27dac150-426d-450a-8119-7e846d0a3bdc">
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="27dac150-426d-450a-8119-7e846d0a3bdc" type="DB:QUERY_EXECUTION">
 				<ee:transform doc:name="Transform Message" doc:id="71784938-2601-480d-9859-5fc3f33c6554" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
