@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+	<munit:config name="new-test-suite.xml" />
+	<munit:test name="new-test-suite-put:\customer\(customerId):application\json:customer-configTest" description="Test" doc:id="cf18bbc1-30c9-45ed-9728-ac1e2fe9aaa9" >
+		<munit:execution >
+			<set-variable value="#[['customerId':'1']]" doc:name="Set Variable" doc:id="17aa4e56-4827-425e-858e-241e338d001b" variableName="http.uri.params"/>
+			<set-payload value='#[{"firstName":"Jay","lastName":"Nu"}]' doc:name="Set Payload" doc:id="3aaf15f4-a205-4491-943a-710c570c093e" />
+			<flow-ref doc:name="Flow-ref to put:\customer\(customerId):application\json:customer-config" doc:id="806f4f4c-7f18-43cf-b0d3-3909210d6660" name="put:\customer\(customerId):application\json:customer-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert Status" doc:id="ca8927dd-f64c-4063-89be-b7cafd518c56" expression="#[payload.status]" is="#[MunitTools::equalTo(204)]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="new-test-suite-delete:\customer\(customerId):customer-configTest" description="Test" doc:id="dd079374-07f3-435e-a32f-9a89979ad6ed" >
+		<munit:execution >
+			<set-variable value="#[['customerId':'25']]" doc:name="Set Variable" doc:id="413fa328-7a13-4b01-8420-6500abe9252d" variableName="http.uri.params"/>
+			<flow-ref doc:name="Flow-ref to delete:\customer\(customerId):customer-config" doc:id="f0db635e-8111-49eb-ac5f-c5df6872819c" name="delete:\customer\(customerId):customer-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert status" doc:id="0dbf78f2-a2a7-4240-8478-6b28f24cdf3a" expression="#[payload.status]" is="#[MunitTools::equalTo(204)]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="new-test-suite-get:\customers:customer-configTest" description="Test" doc:id="c9bcd645-c8f0-432e-9109-f0fe8b251deb" >
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\customers:customer-config" doc:id="a23b4ef1-6fe1-4620-b9f2-ea428fe58136" name="get:\customers:customer-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="26282fa8-245e-4c9b-a997-08a595c27f88" expression="#[payload.data]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="new-test-suite-post:\customer:application\json:customer-configTest" description="Test" doc:id="8d306988-4fe7-4f9a-943d-69d333a9db30" >
+		<munit:execution >
+			<set-payload value='#[{"firstName":"Jay","lastName":"Ni","address":"Auckland City"}]' doc:name="set Payload" doc:id="6dabe9b3-4b2b-4472-8f1f-2ec1cd266137" />
+			<flow-ref doc:name="Flow-ref to post:\customer:application\json:customer-config" doc:id="48896107-6507-4173-a8bb-fc07fe23d33c" name="post:\customer:application\json:customer-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert Status" doc:id="7206b3a8-92a9-40df-8152-e07ac140e949" expression="#[payload.status]" is="#[MunitTools::equalTo(200)]"/>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="c5f023b9-4efd-4c39-ab9f-2c4caf01d53a" expression="#[payload.data.firstName]" is="#[MunitTools::equalTo('Jay')]"/>
+		</munit:validation>
+	</munit:test>
+
+</mule>
