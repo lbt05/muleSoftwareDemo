@@ -34,7 +34,7 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_FOUND">
+            <on-error-propagate type="APIKIT:NOT_FOUND" doc:name="On Error Propagate" enableNotifications="true" logException="true">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
@@ -86,8 +86,8 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED" doc:name="On Error Propagate" enableNotifications="true" logException="true">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="9de83eaa-684b-48c7-bea1-ec0f83c4419d">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -95,13 +95,13 @@ output application/json
 {message: "Not Implemented"}]]></ee:set-payload>
                     </ee:message>
                     <ee:variables>
-                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[501]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="customer-console">
+	<flow name="customer-console">
         <http:listener config-ref="customer-httpListenerConfig" path="/console/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
@@ -234,5 +234,20 @@ output application/json
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
+		<error-handler>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="27dac150-426d-450a-8119-7e846d0a3bdc">
+				<ee:transform doc:name="Transform Message" doc:id="71784938-2601-480d-9859-5fc3f33c6554" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	"status":409,
+	"success":false
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
     </flow>
 </mule>
